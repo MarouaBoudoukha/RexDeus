@@ -1,0 +1,36 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #3b3b3b;
+  color: white;
+}
+
+.action-button {
+  background-color: purple;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background-color: darkviolet;
+}

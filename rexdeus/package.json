@@ -3,9 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@coreui/coreui": "^5.2.0",
+    "@coreui/icons": "^3.0.1",
+    "@coreui/icons-react": "^2.3.0",
+    "@coreui/react": "^5.4.1",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "cra-template": "1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1"
   },
   "scripts": {
