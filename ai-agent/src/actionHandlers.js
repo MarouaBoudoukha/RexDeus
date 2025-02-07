@@ -44,29 +44,65 @@ async function handleCreateItem(params) {
     return { status: 'error', message: error.message || error.toString() };
   }
 }
-
 async function handleDeployToken(params) {
   try {
     const agentKit = await getAgentKit();
+
+    // Log wallet provider details.
+    const walletAddress =
+      agentKit.walletProvider.address ||
+      (typeof agentKit.walletProvider.getAddress === "function" &&
+        (await agentKit.walletProvider.getAddress()));
+    console.log("Wallet provider address:", walletAddress);
+
+    // Retrieve the deploy token action.
     const actions = agentKit.getActions();
     const deployTokenAction = actions.find(
-      a => a.name === 'WalletActionProvider_deploy_token' || a.name === 'Erc721ActionProvider_deploy_token'
-    );s
+      (a) => a.name === "CdpWalletActionProvider_deploy_token"
+    );
     if (!deployTokenAction) {
       throw new Error("Deploy token action not found");
     }
-    const tokenResult = await deployTokenAction.invoke(agentKit.walletProvider, {
+
+    // Build the base parameters that the schema validates.
+    const baseParams = {
+      name: params.name || "MyToken",
       symbol: params.symbol,
-      decimals: params.decimals,
-      maxSupply: params.maxSupply,
-    });
+      totalSupply: BigInt(params.totalSupply),
+    };
+
+    // Validate using the action's schema.
+    const validationResult = deployTokenAction.schema.safeParse(baseParams);
+    console.log("Schema validation result:", validationResult);
+    if (!validationResult.success) {
+      throw new Error("Schema validation failed: " + validationResult.error);
+    }
+
+    // The underlying deploy code appears to expect additional fields:
+    //   - decimals (typically 18)
+    //   - maxSupply (as a string)
+    // These fields get stripped by the schema but are needed at runtime.
+    const tokenParams = {
+      ...validationResult.data,
+      decimals: params.decimals !== undefined ? params.decimals : 18,
+      maxSupply: BigInt(params.totalSupply).toString(),
+    };
+
+    console.log("Deploying token with parameters:", tokenParams);
+
+    // Invoke the deploy token action.
+    const tokenResult = await deployTokenAction.invoke(
+      agentKit.walletProvider,
+      tokenParams
+    );
     return {
-      status: 'success',
-      action: 'deploy_token',
+      status: "success",
+      action: "deploy_token",
       details: `Deployed token: ${JSON.stringify(tokenResult)}`,
     };
   } catch (error) {
-    return { status: 'error', message: error.message };
+    console.error("Error deploying token:", error);
+    return { status: "error", message: error.message };
   }
 }
 
