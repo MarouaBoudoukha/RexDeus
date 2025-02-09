@@ -29,7 +29,18 @@ async function handleCreateItem(params) {
 
     // Directly call deployNFT on the wallet provider (bypassing the action provider wrapper)
     const nftContract = await agentKit.walletProvider.deployNFT(nftOptions);
+    console.log("NFT contract deployed. Waiting for transaction confirmation...");
+
     const result = await nftContract.wait();
+
+    // Log detailed NFT creation results
+    console.log("NFT creation transaction confirmed.");
+    console.log("Contract Address:", result.getContractAddress());
+    if (result.getTransaction() && typeof result.getTransaction().getTransactionHash === "function") {
+      console.log("Transaction Hash:", result.getTransaction().getTransactionHash());
+    } else {
+      console.log("Transaction details not fully available.");
+    }
 
     return {
       status: 'success',

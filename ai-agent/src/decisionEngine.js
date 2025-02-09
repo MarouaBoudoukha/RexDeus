@@ -12,7 +12,18 @@ async function routeIntent(intentObj) {
   switch (intent) {
     case 'create_item':
       if (itemType === 'NFT_Character' || itemType === 'Game_Asset') {
-        return await handleCreateItem(parameters);
+        // First, mint the NFT for the smart NPC.
+        const createResult = await handleCreateItem(parameters);
+        if (createResult.status === 'success') {
+          // Automatically register the operator after creating the NFT.
+          const registerResult = await handleRegisterOperator({});
+          return {
+            status: 'success',
+            action: 'create_item_with_operator',
+            details: `Created NFT: ${createResult.details}\nOperator Registration: ${registerResult.details}`
+          };
+        }
+        return createResult;
       }
       break;
     case 'deploy_token':
