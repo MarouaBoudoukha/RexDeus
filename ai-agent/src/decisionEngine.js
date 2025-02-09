@@ -1,5 +1,6 @@
 // src/decisionEngine.js
 const { handleCreateItem, handleDeployToken, handleSpawnBabyAI } = require('./actionHandlers');
+const { handleRegisterOperator } = require('./eigenLayerHandlers');
 
 async function routeIntent(intentObj) {
   if (!intentObj || !intentObj.intent) {
@@ -18,6 +19,8 @@ async function routeIntent(intentObj) {
       return await handleDeployToken(parameters);
     case 'spawn_baby_ai':
       return await handleSpawnBabyAI(parameters);
+    case 'register_operator': //intent for operator registration/delegation.
+      return await handleRegisterOperator(parameters);
     default:
       return { status: 'error', message: 'Unknown intent' };
   }

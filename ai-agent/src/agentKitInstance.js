@@ -1,5 +1,6 @@
 // src/agentKitInstance.js
 const { AgentKit, CdpWalletProvider, walletActionProvider, erc721ActionProvider, pythActionProvider, cdpWalletActionProvider } = require('@coinbase/agentkit');
+const { handleRegisterOperator } = require('./eigenLayerHandlers');
 
 async function initializeAgentKit() {
   // Configure the wallet provider using environment variables.

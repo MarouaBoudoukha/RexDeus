@@ -1,7 +1,7 @@
 // test-agentkit.js
 require('dotenv').config(); // Load environment variables
 
-const initializeAgentKit = require('./src/agentKitInstance');
+const initializeAgentKit = require('../agentKitInstance');
 
 (async () => {
   try {
