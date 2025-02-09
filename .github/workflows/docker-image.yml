@@ -23,7 +23,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: maroua321
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          password: dckr_pat_fxnADbL1Dm-ijyGsEl3nP5Jcnrw
 
       # 4. Build and push the Docker image
       - name: Build and push Docker image
