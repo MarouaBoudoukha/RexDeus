@@ -584,10 +584,6 @@ const DelegationManager_ABI = [
 
 
 
-// Utility to create provider and signer.
-// Utility to create provider and signer.
-// Import ethers.js
-const { ethers } = require("ethers");
 
 // Utility to create provider and signer
 function getSigner() {
