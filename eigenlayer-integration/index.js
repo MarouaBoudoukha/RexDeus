@@ -238,7 +238,6 @@ const ERC20_ABI = [
 const StrategyManager_ABI = [{"inputs":[{"internalType":"contract IEigenPodManager","name":"_eigenPodManager","type":"address"},{"internalType":"contract IAllocationManager","name":"_allocationManager","type":"address"},{"internalType":"contract IPauserRegistry","name":"_pauserRegistry","type":"address"},{"internalType":"contract IPermissionController","name":"_permissionController","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"_strategy","type":"address"},{"internalType":"address","name":"_token","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"depositIntoStrategy","outputs":[],"stateMutability":"nonpayable","type":"function"}];
 
 // ABI for the Strategy contract.
-
 const Strategy_ABI = [
     {
         "inputs":[
@@ -453,38 +452,15 @@ const Strategy_ABI = [
 
 // ABI for the DelegationManager contract.
 const DelegationManager_ABI = [
+    // Constructor
     {
       "inputs": [
-        {
-          "internalType": "contract IStrategyManager",
-          "name": "_strategyManager",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IEigenPodManager",
-          "name": "_eigenPodManager",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IAllocationManager",
-          "name": "_allocationManager",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IPauserRegistry",
-          "name": "_pauserRegistry",
-          "type": "address"
-        },
-        {
-          "internalType": "contract IPermissionController",
-          "name": "_permissionController",
-          "type": "address"
-        },
-        {
-          "internalType": "uint32",
-          "name": "_MIN_WITHDRAWAL_DELAY",
-          "type": "uint32"
-        }
+        { "internalType": "contract IStrategyManager", "name": "_strategyManager", "type": "address" },
+        { "internalType": "contract IEigenPodManager", "name": "_eigenPodManager", "type": "address" },
+        { "internalType": "contract IAllocationManager", "name": "_allocationManager", "type": "address" },
+        { "internalType": "contract IPauserRegistry", "name": "_pauserRegistry", "type": "address" },
+        { "internalType": "contract IPermissionController", "name": "_permissionController", "type": "address" },
+        { "internalType": "uint32", "name": "_MIN_WITHDRAWAL_DELAY", "type": "uint32" }
       ],
       "stateMutability": "nonpayable",
       "type": "constructor"
@@ -495,36 +471,9 @@ const DelegationManager_ABI = [
     { "inputs": [], "name": "CurrentlyPaused", "type": "error" },
     { "inputs": [], "name": "FullySlashed", "type": "error" },
     { "inputs": [], "name": "InputAddressZero", "type": "error" },
-    { "inputs": [], "name": "InputArrayLengthMismatch", "type": "error" },
-    { "inputs": [], "name": "InputArrayLengthZero", "type": "error" },
-    { "inputs": [], "name": "InvalidNewPausedStatus", "type": "error" },
-    { "inputs": [], "name": "InvalidPermissions", "type": "error" },
-    { "inputs": [], "name": "InvalidSignature", "type": "error" },
-    { "inputs": [], "name": "InvalidSnapshotOrdering", "type": "error" },
-    { "inputs": [], "name": "NotActivelyDelegated", "type": "error" },
-    { "inputs": [], "name": "OnlyAllocationManager", "type": "error" },
-    { "inputs": [], "name": "OnlyEigenPodManager", "type": "error" },
-    { "inputs": [], "name": "OnlyPauser", "type": "error" },
-    { "inputs": [], "name": "OnlyStrategyManagerOrEigenPodManager", "type": "error" },
-    { "inputs": [], "name": "OnlyUnpauser", "type": "error" },
-    { "inputs": [], "name": "OperatorNotRegistered", "type": "error" },
-    { "inputs": [], "name": "OperatorsCannotUndelegate", "type": "error" },
-    { "inputs": [], "name": "SaltSpent", "type": "error" },
-    { "inputs": [], "name": "SignatureExpired", "type": "error" },
-    { "inputs": [], "name": "WithdrawalDelayNotElapsed", "type": "error" },
     { "inputs": [], "name": "WithdrawalNotQueued", "type": "error" },
     { "inputs": [], "name": "WithdrawerNotCaller", "type": "error" },
-    
     // Events
-    {
-      "anonymous": false,
-      "inputs": [
-        { "indexed": true, "internalType": "address", "name": "operator", "type": "address" },
-        { "indexed": false, "internalType": "address", "name": "newDelegationApprover", "type": "address" }
-      ],
-      "name": "DelegationApproverUpdated",
-      "type": "event"
-    },
     {
       "anonymous": false,
       "inputs": [
@@ -550,7 +499,19 @@ const DelegationManager_ABI = [
       ],
       "name": "getQueuedWithdrawals",
       "outputs": [
-        { "internalType": "struct IDelegationManagerTypes.Withdrawal[]", "name": "withdrawals", "type": "tuple[]" },
+        {
+          "components": [
+            { "internalType": "address", "name": "staker", "type": "address" },
+            { "internalType": "address", "name": "delegatedTo", "type": "address" },
+            { "internalType": "address", "name": "withdrawer", "type": "address" },
+            { "internalType": "uint96", "name": "nonce", "type": "uint96" },
+            { "internalType": "uint32", "name": "startBlock", "type": "uint32" },
+            { "internalType": "address[]", "name": "strategies", "type": "address[]" }
+          ],
+          "internalType": "struct IDelegationManagerTypes.Withdrawal[]",
+          "name": "withdrawals",
+          "type": "tuple[]"
+        },
         { "internalType": "uint256[][]", "name": "shares", "type": "uint256[][]" }
       ],
       "stateMutability": "view",
@@ -558,47 +519,104 @@ const DelegationManager_ABI = [
     },
     {
       "inputs": [
-        { "components": [
-          { "internalType": "contract IStrategy", "name": "strategy", "type": "address" },
-          { "internalType": "uint256", "name": "shares", "type": "uint256" },
-          { "internalType": "address", "name": "withdrawer", "type": "address" }
-        ], "internalType": "struct IDelegationManagerTypes.QueuedWithdrawalParams", "name": "params", "type": "tuple" }
+        {
+          "components": [
+            { "internalType": "address[]", "name": "strategies", "type": "address[]" },
+            { "internalType": "uint256[]", "name": "shares", "type": "uint256[]" },
+            { "internalType": "address", "name": "withdrawer", "type": "address" }
+          ],
+          "internalType": "struct IDelegationManagerTypes.QueuedWithdrawal[]",
+          "name": "queuedWithdrawals",
+          "type": "tuple[]"
+        }
       ],
       "name": "queueWithdrawals",
-      "outputs": [
-        { "internalType": "bytes32", "name": "", "type": "bytes32" }
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            { "internalType": "address", "name": "staker", "type": "address" },
+            { "internalType": "address", "name": "delegatedTo", "type": "address" },
+            { "internalType": "address", "name": "withdrawer", "type": "address" },
+            { "internalType": "uint96", "name": "nonce", "type": "uint96" },
+            { "internalType": "uint32", "name": "startBlock", "type": "uint32" },
+            { "internalType": "address[]", "name": "strategies", "type": "address[]" }
+          ],
+          "internalType": "struct IDelegationManagerTypes.Withdrawal",
+          "name": "withdrawal",
+          "type": "tuple"
+        },
+        { "internalType": "address[]", "name": "tokens", "type": "address[]" },
+        { "internalType": "bool", "name": "receiveAsTokens", "type": "bool" }
       ],
+      "name": "completeQueuedWithdrawal",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "operator", "type": "address" },
+        {
+          "components": [
+            { "internalType": "bytes", "name": "signature", "type": "bytes" },
+            { "internalType": "uint256", "name": "expiry", "type": "uint256" }
+          ],
+          "internalType": "struct ISignatureUtils.SignatureWithExpiry",
+          "name": "approverSignatureAndExpiry",
+          "type": "tuple"
+        },
+        { "internalType": "bytes32", "name": "approverSalt", "type": "bytes32" }
+      ],
+      "name": "delegateTo",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     }
   ];
+  
+
 
 
 
 
 // Utility to create provider and signer.
+// Utility to create provider and signer.
+// Import ethers.js
+const { ethers } = require("ethers");
+
+// Utility to create provider and signer
 function getSigner() {
     const provider = new ethers.providers.JsonRpcProvider(
-      process.env.RPC_URL || "https://eth-holesky.g.alchemy.com/v2/6lsSIg_B0EQ4yOIssBcYSsQqqicNnEd5"
+        process.env.RPC_URL || "https://eth-holesky.g.alchemy.com/v2/6lsSIg_B0EQ4yOIssBcYSsQqqicNnEd5"
     );
     return new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 }
 
-// Function to deposit (stake) lsETH.
-async function depositStake(depositAmount) {
+// Function to approve ERC-20 spending for restaking
+async function approveToken(spender, amount) {
     const signer = getSigner();
     const lsETHToken = new ethers.Contract(lsETHTokenAddress, ERC20_ABI, signer);
+
+    console.log("Approving StrategyManager to spend lsETH...");
+    const tx = await lsETHToken.approve(spender, amount);
+    await tx.wait();
+    console.log("✅ Approval successful.");
+}
+
+// Function to deposit (restake) lsETH into the StrategyManager
+async function depositStake(depositAmount) {
+    const signer = getSigner();
     const strategyManager = new ethers.Contract(strategyManagerAddress, StrategyManager_ABI, signer);
 
-    console.log("Approving StrategyManager...");
-    let tx = await lsETHToken.approve(strategyManagerAddress, depositAmount);
+    console.log("Depositing lsETH into StrategyManager...");
+    const tx = await strategyManager.depositIntoStrategy(strategyAddress, lsETHTokenAddress, depositAmount);
     await tx.wait();
-    console.log("Approval successful.");
-
-    console.log("Depositing lsETH...");
-    tx = await strategyManager.depositIntoStrategy(strategyAddress, lsETHTokenAddress, depositAmount);
-    await tx.wait();
-    console.log("Deposit successful.");
+    console.log("✅ Deposit successful.");
 }
 
 // Function to queue a withdrawal
@@ -623,12 +641,20 @@ async function queueWithdrawal(lsETHAmount, withdrawerAddress) {
     const tx = await delegationManager.queueWithdrawals(queuedWithdrawalParams);
     const receipt = await tx.wait();
     
-    const withdrawalHash = receipt.events?.find(e => e.event === "SlashingWithdrawalQueued")?.args?.withdrawalRoot;
-    console.log("Withdrawal hash:", withdrawalHash);
+    const queueBlock = await signer.provider.getBlock(receipt.blockNumber);
+    const queueTimestamp = queueBlock.timestamp;
 
-    console.log(`Withdrawal of ${ethers.utils.formatUnits(lsETHAmount, 18)} lsETH queued successfully.`);
+    console.log(`✅ Withdrawal queued at block ${receipt.blockNumber}, timestamp: ${queueTimestamp}`);
 
-    return queuedWithdrawalParams, withdrawalHash;
+    return { queueBlockNumber: receipt.blockNumber, queueTimestamp };
+}
+
+// Function to check if withdrawal is ready
+async function isWithdrawalReady(queueTimestamp) {
+    const now = Math.floor(Date.now() / 1000); // Current UNIX time (seconds)
+    const escrowDuration = 7 * 24 * 60 * 60; // 7 days in seconds
+
+    return now >= queueTimestamp + escrowDuration;
 }
 
 // Function to retrieve queued withdrawals
@@ -655,24 +681,30 @@ async function completeWithdrawal(stakerAddress, withdrawalIndex = 0, receiveAsT
 
     const queuedWithdrawals = await getQueuedWithdrawals(stakerAddress);
     if (queuedWithdrawals.length === 0) {
-        throw new Error("No queued withdrawals found.");
+        throw new Error("❌ No queued withdrawals found.");
     }
 
     const withdrawalToComplete = queuedWithdrawals[withdrawalIndex];
     const strategies = withdrawalToComplete.strategies;
     const tokens = strategies.map(() => lsETHTokenAddress);
 
-    console.log("Completing withdrawal...");
+    const withdrawalReady = await isWithdrawalReady(withdrawalToComplete.startBlock);
+    if (!withdrawalReady) {
+        console.log("⏳ Withdrawal not yet ready. Try again after 7 days.");
+        return;
+    }
+
+    console.log("✅ Escrow period elapsed. Completing withdrawal...");
     const tx = await delegationManager.completeQueuedWithdrawal(
         withdrawalToComplete,
         tokens,
         receiveAsTokens
     );
     await tx.wait();
-    console.log("Withdrawal completed successfully.");
+    console.log("✅ Withdrawal completed successfully.");
 }
 
-// Function to delegate the staked assets to an operator.
+// Function to delegate the staked assets to an operator
 async function delegateStake(operatorAddress) {
     const signer = getSigner();
     const delegationManager = new ethers.Contract(delegationManagerAddress, DelegationManager_ABI, signer);
@@ -680,38 +712,40 @@ async function delegateStake(operatorAddress) {
     console.log("Delegating to operator:", operatorAddress);
     const tx = await delegationManager.delegateTo(operatorAddress, "0x", "0x");
     await tx.wait();
-    console.log("Delegation successful.");
+    console.log("✅ Delegation successful.");
 }
 
 // Main function to run the process
 async function main() {
     try {
-        const signer = getSigner(); // Get signer
-        const withdrawerAddress = await signer.getAddress(); // Fetch withdrawer address dynamically
+        const signer = getSigner();
+        const withdrawerAddress = await signer.getAddress();
 
         console.log(`Using wallet address: ${withdrawerAddress}`);
 
-        // Define the deposit/withdraw amount (e.g., 0.01 lsETH; assuming 18 decimals).
         const amount = ethers.utils.parseUnits("0.01", 18);
 
-        // Deposit (stake) the lsETH.
+        // Approve the token for spending
+        await approveToken(strategyManagerAddress, amount);
+
+        // Deposit (Restake) the lsETH
         await depositStake(amount);
 
-        // Delegate the staked assets to an operator.
+        // Delegate the staked assets to an operator
         const operatorAddress = "0x5accc90436492f24e6af278569691e2c942a676d";
         await delegateStake(operatorAddress);
 
-        // Queue the withdrawal using the fetched withdrawer address.
-        await queueWithdrawal(amount, withdrawerAddress);
+        // Queue the withdrawal and get timestamps
+        const { queueTimestamp } = await queueWithdrawal(amount, withdrawerAddress);
 
-        // Wait for the escrow period before completing the withdrawal.
-        await completeWithdrawal(withdrawerAddress);
+        console.log(`⏳ Withdrawal queued. You must wait at least 7 days before withdrawing.`);
+
+        console.log("⏳ You can run the script again to complete the withdrawal after 7 days.");
 
     } catch (error) {
-        console.error("An error occurred:", error);
+        console.error("❌ An error occurred:", error);
     }
 }
-
 
 // Run the main function
 main();
